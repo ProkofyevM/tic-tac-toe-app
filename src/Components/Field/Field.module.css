@@ -1,0 +1,20 @@
+.buttons {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 3px;
+}
+
+.button {
+	width: 100px;
+	height: 100px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #b1cfc4;
+	color: #000;
+	font-size: 70px;
+   color: #d99494;
+   box-shadow: 3px 3px 3px #080e0c;
+	cursor: pointer;
+   font-family: Bradley Hand, cursive;
+}
