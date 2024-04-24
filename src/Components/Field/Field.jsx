@@ -1,7 +1,9 @@
 import styles from '../Field/Field.module.css'
 import PropTypes from 'prop-types'
+import { store } from '../../store'
 
-export const Field = ({ field, onClick }) => {
+export const Field = ({ onClick }) => {
+	const { field } = store.getState()
 	return (
 		<div className={styles.buttons}>
 			{field.map((btn, i) => (
@@ -13,7 +15,7 @@ export const Field = ({ field, onClick }) => {
 	)
 }
 
-Field.propTypes ={
-   field : PropTypes.bool,
-   onClick: PropTypes.func
+Field.propTypes = {
+	field: PropTypes.bool,
+	onClick: PropTypes.func,
 }

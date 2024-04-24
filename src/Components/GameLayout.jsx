@@ -3,22 +3,11 @@ import { Field } from '../Components/Field/Field.jsx'
 import { Information } from '../Components/Information/Information.jsx'
 import PropTypes from 'prop-types'
 
-export const GameLayout = ({
-	currentPlayer,
-	isDraw,
-	isGameEnded,
-	field,
-	handleClick,
-	handelClickRestart,
-}) => {
+export const GameLayout = ({ handleClick, handelClickRestart }) => {
 	return (
 		<>
-			<Information
-				currentPlayer={currentPlayer}
-				isDraw={isDraw}
-				isGameEnded={isGameEnded}
-			/>
-			<Field field={field} onClick={handleClick} />
+			<Information />
+			<Field onClick={handleClick} />
 			<button className="btnRestart" onClick={handelClickRestart}>
 				Начать заново
 			</button>
@@ -27,11 +16,10 @@ export const GameLayout = ({
 }
 
 GameLayout.propTypes = {
-   currentPlayer: PropTypes.string,
-   isDraw: PropTypes.bool,
-   isGameEnded: PropTypes.bool,
-   field: PropTypes.object,
-   handleClick: PropTypes.func,
-   handelClickRestart: PropTypes.func
+	currentPlayer: PropTypes.string,
+	isDraw: PropTypes.bool,
+	isGameEnded: PropTypes.bool,
+	field: PropTypes.object,
+	handleClick: PropTypes.func,
+	handelClickRestart: PropTypes.func,
 }
-
