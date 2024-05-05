@@ -1,9 +1,10 @@
 import styles from '../Field/Field.module.css'
 import PropTypes from 'prop-types'
-import { store } from '../../store'
+import { useSelector } from 'react-redux'
+import { filedSelect } from '../../selectors/select-field'
 
 export const Field = ({ onClick }) => {
-	const { field } = store.getState()
+	const field = useSelector(filedSelect)
 	return (
 		<div className={styles.buttons}>
 			{field.map((btn, i) => (

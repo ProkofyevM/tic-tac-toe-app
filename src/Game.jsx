@@ -1,8 +1,8 @@
 import './App.css'
 import './App.css'
 import { GameLayout } from './Components/GameLayout'
-import { store } from './store'
-import { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { currentPlayerSelect, isGameEndedSelect, filedSelect } from './selectors'
 
 const WIN_PATTERNS = [
 	[0, 1, 2],
@@ -16,16 +16,11 @@ const WIN_PATTERNS = [
 ]
 
 export const Game = () => {
-	const [updateFields, setUpdateFields] = useState(false)
+	const dispatch = useDispatch()
 
-	useEffect(() => {
-		const subscribe = store.subscribe(() => {
-			setUpdateFields(!updateFields)
-		})
-		return () => subscribe()
-	}, [updateFields])
-
-	const { currentPlayer, isGameEnded, field } = store.getState()
+	const currentPlayer = useSelector(currentPlayerSelect)
+	const isGameEnded = useSelector(isGameEndedSelect)
+	const field = useSelector(filedSelect)
 
 	const handleClick = (i) => {
 		if (field[i] !== '' || isGameEnded) {
@@ -33,7 +28,7 @@ export const Game = () => {
 		}
 		const newField = [...field]
 		newField[i] = currentPlayer
-		store.dispatch({ type: 'SET_FIELD', payload: newField })
+		dispatch({ type: 'SET_FIELD', payload: newField })
 
 		showWinner(newField)
 	}
@@ -42,26 +37,24 @@ export const Game = () => {
 		for (let i = 0; i < WIN_PATTERNS.length; i++) {
 			const [a, b, c] = WIN_PATTERNS[i]
 			if (arr[a] === arr[b] && arr[b] === arr[c] && arr[a] !== '') {
-				store.dispatch({ type: 'SET_GAME_ENDED', payload: true })
+				dispatch({ type: 'SET_GAME_ENDED', payload: true })
 				return arr[a]
 			}
 		}
 		if (!arr.includes('')) {
-			store.dispatch({ type: 'SET_GAME_ENDED', payload: true })
-			store.dispatch({ type: 'SET_IS_DRAW' })
+			dispatch({ type: 'SET_GAME_ENDED', payload: true })
+			dispatch({ type: 'SET_IS_DRAW' })
 		}
 		currentPlayer === 'X'
-			? store.dispatch({ type: 'SET_CURRENT_PLAYER', payload: '0' })
-			: store.dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
+			? dispatch({ type: 'SET_CURRENT_PLAYER', payload: '0' })
+			: dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
 	}
 
 	const handelClickRestart = () => {
-		store.dispatch({ type: 'SET_IS_DRAW', payload: false })
-		store.dispatch({ type: 'SET_FIELD', payload: Array(9).fill('') })
-		store.dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
-		store.dispatch({ type: 'SET_GAME_ENDED', payload: false })
-
-		setUpdateFields(!updateFields)
+		dispatch({ type: 'SET_IS_DRAW', payload: false })
+		dispatch({ type: 'SET_FIELD', payload: Array(9).fill('') })
+		dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
+		dispatch({ type: 'SET_GAME_ENDED', payload: false })
 	}
 
 	return (
