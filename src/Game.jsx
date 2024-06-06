@@ -1,7 +1,7 @@
 import './App.css'
-import './App.css'
+import React, { Component } from 'react'
 import { GameLayout } from './Components/GameLayout'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { currentPlayerSelect, isGameEndedSelect, filedSelect } from './selectors'
 
 const WIN_PATTERNS = [
@@ -15,14 +15,16 @@ const WIN_PATTERNS = [
 	[2, 4, 6], // Варианты побед по диагонали
 ]
 
-export const Game = () => {
-	const dispatch = useDispatch()
+class GameContainer extends Component {
+	constructor(props) {
+		super(props)
 
-	const currentPlayer = useSelector(currentPlayerSelect)
-	const isGameEnded = useSelector(isGameEndedSelect)
-	const field = useSelector(filedSelect)
-
-	const handleClick = (i) => {
+		this.handleClick = this.handleClick.bind(this)
+		this.showWinner = this.showWinner.bind(this)
+		this.handelClickRestart = this.handelClickRestart.bind(this)
+	}
+	handleClick(i) {
+		const { currentPlayer, isGameEnded, field, dispatch } = this.props
 		if (field[i] !== '' || isGameEnded) {
 			return
 		}
@@ -30,10 +32,15 @@ export const Game = () => {
 		newField[i] = currentPlayer
 		dispatch({ type: 'SET_FIELD', payload: newField })
 
-		showWinner(newField)
+		this.showWinner(newField)
+
+		currentPlayer === 'X'
+			? dispatch({ type: 'SET_CURRENT_PLAYER', payload: '0' })
+			: dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
 	}
 
-	const showWinner = (arr) => {
+	showWinner(arr) {
+		const { currentPlayer, dispatch } = this.props
 		for (let i = 0; i < WIN_PATTERNS.length; i++) {
 			const [a, b, c] = WIN_PATTERNS[i]
 			if (arr[a] === arr[b] && arr[b] === arr[c] && arr[a] !== '') {
@@ -45,24 +52,33 @@ export const Game = () => {
 			dispatch({ type: 'SET_GAME_ENDED', payload: true })
 			dispatch({ type: 'SET_IS_DRAW' })
 		}
-		currentPlayer === 'X'
-			? dispatch({ type: 'SET_CURRENT_PLAYER', payload: '0' })
-			: dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
+		this.setState({ currentPlayer: currentPlayer === 'X' ? '0' : 'X' })
 	}
 
-	const handelClickRestart = () => {
+	handelClickRestart() {
+		const { dispatch } = this.props
 		dispatch({ type: 'SET_IS_DRAW', payload: false })
 		dispatch({ type: 'SET_FIELD', payload: Array(9).fill('') })
 		dispatch({ type: 'SET_CURRENT_PLAYER', payload: 'X' })
 		dispatch({ type: 'SET_GAME_ENDED', payload: false })
 	}
 
-	return (
-		<div className="app">
-			<GameLayout
-				handleClick={handleClick}
-				handelClickRestart={handelClickRestart}
-			/>
-		</div>
-	)
+	render() {
+		return (
+			<div className="app">
+				<GameLayout
+					handleClick={this.handleClick}
+					handelClickRestart={this.handelClickRestart}
+				/>
+			</div>
+		)
+	}
 }
+
+const mapStateToProps = (state) => ({
+	currentPlayer: currentPlayerSelect(state),
+	isGameEnded: isGameEndedSelect(state),
+	field: filedSelect(state),
+})
+
+export const Game = connect(mapStateToProps)(GameContainer)

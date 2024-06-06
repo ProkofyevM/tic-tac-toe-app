@@ -1,29 +1,38 @@
 import PropTypes from 'prop-types'
 import { InformationLayout } from './InformationLayout'
 import { currentPlayerSelect, isDrawSelect, isGameEndedSelect } from '../../selectors'
-import { useSelector } from 'react-redux'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
-export const Information = () => {
-	const currentPlayer = useSelector(currentPlayerSelect)
-	const isDraw = useSelector(isDrawSelect)
-	const isGameEnded = useSelector(isGameEndedSelect)
+class InformationContainer extends Component {
+	render() {
+		const { currentPlayer, isDraw, isGameEnded } = this.props
 
-	let text = null
+		let text = null
 
-	if (isDraw) {
-		console.log('isDraw', isDraw)
-		text = 'Ничья'
-	} else if (isGameEnded) {
-		console.log('isGameEnded', isGameEnded)
-		text = `Победа_ ${currentPlayer}`
-	} else {
-		text = `Ходит_ ${currentPlayer}`
+		if (isDraw) {
+			text = 'Ничья'
+		} else if (isGameEnded) {
+			text = `Победа_ ${currentPlayer}`
+		} else {
+			text = `Ходит_ ${currentPlayer}`
+		}
+
+		return <InformationLayout text={text} />
 	}
-
-	return <InformationLayout text={text} />
 }
 
-Information.propTypes = {
+const mapDispatchToProps = (state) => {
+	return {
+		currentPlayer: currentPlayerSelect(state),
+		isDraw: isDrawSelect(state),
+		isGameEnded: isGameEndedSelect(state),
+	}
+}
+
+export const Information = connect(mapDispatchToProps)(InformationContainer)
+
+InformationContainer.propTypes = {
 	currentPlayer: PropTypes.string,
 	isGameEnded: PropTypes.bool,
 	isDraw: PropTypes.bool,
